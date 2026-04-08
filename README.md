@@ -2,7 +2,7 @@
 
 A Microsoft Edge extension that shows your Claude Pro session and weekly quota in a floating window.
 
-![Claude Usage Monitor screenshot](docs/screenshot.png)
+![Claude Usage Monitor screenshot](docs/claude-usage-monitor-example.png)
 
 ## Features
 
