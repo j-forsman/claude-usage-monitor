@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Claude Usage Monitor",
+  "version": "2.0.0",
+  "description": "Visar din Claude Pro session- och veckokvot i ett fristående fönster.",
+  "permissions": ["storage", "alarms", "windows", "system.display"],
+  "host_permissions": ["https://claude.ai/*"],
+  "action": {
+    "default_icon": {
+      "16":  "icons/icon16.png",
+      "48":  "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "Claude Usage – klicka för att öppna/stänga"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16":  "icons/icon16.png",
+    "48":  "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

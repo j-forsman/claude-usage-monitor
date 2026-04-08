@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Usage</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 340px;
+      background: #1a1a1a;
+      color: #f0f0f0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 14px;
+      border: 1px solid #2e2e2e;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .inner {
+      padding: 13px 15px 12px;
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 11px;
+    }
+
+    .drag-dots {
+      color: #444;
+      font-size: 15px;
+      line-height: 1;
+      font-family: "Courier New", monospace;
+      cursor: default;
+      user-select: none;
+    }
+
+    .title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #f0f0f0;
+      letter-spacing: 0.01em;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #444;
+      transition: background 0.4s;
+      flex-shrink: 0;
+    }
+    .status-dot.ok      { background: #22c55e; }
+    .status-dot.loading { background: #f59e0b; }
+    .status-dot.error   { background: #ef4444; }
+
+    .refresh-btn {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: #555;
+      font-size: 15px;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 3px;
+      transition: color 0.15s;
+      line-height: 1;
+    }
+    .refresh-btn:hover { color: #f0f0f0; }
+    .refresh-btn.spinning { animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: #2e2e2e;
+      margin-bottom: 11px;
+    }
+
+    /* ── Usage rows ── */
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 5px;
+    }
+
+    .row-label {
+      font-size: 11px;
+      color: #f0f0f0;
+      letter-spacing: 0.02em;
+    }
+
+    .row-pct {
+      font-size: 11px;
+      font-weight: 700;
+      transition: color 0.3s;
+    }
+    .row-pct.session { color: #d97706; }
+    .row-pct.weekly  { color: #3b82f6; }
+    .row-pct.warn    { color: #ef4444; }
+
+    /* ── Progress bar ── */
+    .bar-track {
+      height: 7px;
+      background: #2e2e2e;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      width: 0%;
+      transition: width 0.6s cubic-bezier(.22,.68,0,1.2),
+                  background-color 0.3s;
+    }
+    .bar-fill.session { background: #d97706; }
+    .bar-fill.weekly  { background: #3b82f6; }
+    .bar-fill.warn    { background: #ef4444; }
+
+    /* ── Footer ── */
+    .footer {
+      font-size: 10px;
+      color: #555;
+      margin-top: 3px;
+    }
+
+    /* ── Error message ── */
+    .error-msg {
+      display: none;
+      font-size: 10px;
+      color: #ef4444;
+      margin-top: 6px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+  <div class="inner">
+
+    <!-- Header -->
+    <div class="header">
+      <span class="drag-dots">⠿</span>
+      <span class="title">Claude Pro</span>
+      <div class="status-dot" id="dot"></div>
+      <button class="refresh-btn" id="refreshBtn" title="Uppdatera">↻</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Current session -->
+    <div class="row">
+      <span class="row-label">Current session</span>
+      <span class="row-pct session" id="sessionPct">—</span>
+    </div>
+    <div class="bar-track">
+      <div class="bar-fill session" id="sessionBar"></div>
+    </div>
+
+    <!-- Weekly -->
+    <div class="row">
+      <span class="row-label">Weekly · All models</span>
+      <span class="row-pct weekly" id="weeklyPct">—</span>
+    </div>
+    <div class="bar-track">
+      <div class="bar-fill weekly" id="weeklyBar"></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer" id="footer">Laddar…</div>
+    <div class="error-msg" id="errorMsg"></div>
+    <button id="debugToggle" style="margin-top:8px;background:none;border:1px solid #2e2e2e;color:#555;font-size:10px;padding:3px 7px;border-radius:3px;cursor:pointer;width:100%;text-align:left;">Visa rådata ▾</button>
+    <pre id="debugBox" style="display:none;margin-top:6px;font-size:10px;color:#888;background:#111;border:1px solid #2e2e2e;border-radius:3px;padding:6px;overflow:auto;max-height:200px;white-space:pre-wrap;word-break:break-all;"></pre>
+
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

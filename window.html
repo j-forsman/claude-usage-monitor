@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <title>Claude Usage</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 360px;
+      height: 100%;
+      background: #1a1a1a;
+      color: #f0f0f0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 15px;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .inner { padding: 13px 15px 12px; }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 11px;
+      -webkit-app-region: drag;   /* drag hela headern för att flytta fönstret */
+    }
+    .header button, .header .no-drag {
+      -webkit-app-region: no-drag;
+    }
+    .drag-dots {
+      color: #444;
+      font-size: 15px;
+      font-family: "Courier New", monospace;
+    }
+    .title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #f0f0f0;
+    }
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #444;
+      transition: background 0.4s;
+      flex-shrink: 0;
+    }
+    .status-dot.ok      { background: #22c55e; }
+    .status-dot.loading { background: #f59e0b; animation: pulse 1s infinite; }
+    .status-dot.error   { background: #ef4444; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    .btn-icon {
+      background: none; border: none;
+      color: #555; font-size: 15px;
+      cursor: pointer; padding: 2px 4px;
+      border-radius: 3px; line-height: 1;
+      transition: color 0.15s;
+    }
+    .btn-icon:hover { color: #f0f0f0; }
+
+    #refreshBtn.spinning { animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .spacer { flex: 1; }
+
+    /* Divider */
+    .divider { height: 1px; background: #2e2e2e; margin-bottom: 11px; }
+
+    /* Rows */
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 4px;
+    }
+    .row-label { font-size: 13px; color: #f0f0f0; }
+    .row-meta  { font-size: 11px; color: #666; margin-top: 1px; margin-bottom: 8px; }
+    .row-pct   { font-size: 13px; font-weight: 700; transition: color 0.3s; }
+    .row-pct.session { color: #d97706; }
+    .row-pct.weekly  { color: #3b82f6; }
+    .row-pct.warn    { color: #ef4444; }
+
+    /* Bar */
+    .bar-track {
+      height: 8px; background: #2e2e2e;
+      border-radius: 4px; overflow: hidden; margin-bottom: 3px;
+    }
+    .bar-fill {
+      height: 100%; border-radius: 4px; width: 0%;
+      transition: width 0.6s cubic-bezier(.22,.68,0,1.2), background-color 0.3s;
+    }
+    .bar-fill.session { background: #d97706; }
+    .bar-fill.weekly  { background: #3b82f6; }
+    .bar-fill.warn    { background: #ef4444; }
+
+    /* Extra chip */
+    .extra-chip {
+      display: none; margin-top: 8px;
+      padding: 6px 10px;
+      background: #1f1a10; border: 1px solid #44300a;
+      border-radius: 4px; font-size: 12px; color: #d97706; line-height: 1.5;
+    }
+    .extra-chip.visible { display: block; }
+
+    .divider-sm { height: 1px; background: #2e2e2e; margin: 9px 0; }
+
+    .footer { font-size: 11px; color: #555; }
+    .error-msg {
+      display: none; font-size: 11px; color: #ef4444;
+      margin-top: 5px; line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+<div class="inner">
+
+  <div class="header">
+    <span class="drag-dots">⠿</span>
+    <span class="title">Claude Pro</span>
+    <div class="status-dot" id="dot"></div>
+    <span class="spacer"></span>
+    <button class="btn-icon no-drag" id="refreshBtn" title="Uppdatera">↻</button>
+    <button class="btn-icon no-drag" id="closeBtn" title="Stäng">✕</button>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Session -->
+  <div class="row">
+    <span class="row-label">Current session · 5h</span>
+    <span class="row-pct session" id="sessionPct">—</span>
+  </div>
+  <div class="bar-track"><div class="bar-fill session" id="sessionBar"></div></div>
+  <div class="row-meta" id="sessionReset"></div>
+
+  <!-- Weekly -->
+  <div class="row">
+    <span class="row-label">Weekly · All models</span>
+    <span class="row-pct weekly" id="weeklyPct">—</span>
+  </div>
+  <div class="bar-track"><div class="bar-fill weekly" id="weeklyBar"></div></div>
+  <div class="row-meta" id="weeklyReset"></div>
+
+  <!-- Extra -->
+  <div class="extra-chip" id="extraChip"></div>
+
+  <div class="divider-sm"></div>
+  <div class="footer" id="footer">Laddar…</div>
+  <div class="error-msg" id="errorMsg"></div>
+
+</div>
+<script src="window.js"></script>
+</body>
+</html>
